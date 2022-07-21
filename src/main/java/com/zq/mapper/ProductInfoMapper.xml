@@ -98,8 +98,6 @@
     delete from product_info
     where p_id = #{pId,jdbcType=INTEGER}
   </delete>
-
-
     <!--  批量删除-->
     <!--  int deleteBath(String[] pids);-->
     <delete id="deleteBath">
@@ -108,8 +106,6 @@
             #{pid}
         </foreach>
     </delete>
-
-
     <delete id="deleteByExample" parameterType="com.zq.pojo.ProductInfoExample">
         delete from product_info
         <if test="_parameter != null">
@@ -179,11 +175,40 @@
             </if>
         </trim>
     </insert>
-    <select id="countByExample" parameterType="com.zq.pojo.ProductInfoExample" resultType="java.lang.Integer">
-        select count(*) from product_info
+    <select id="countByExample" parameterType="com.zq.pojo.AdminExample" resultType="java.lang.Integer">
+        select count(*) from admin
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
+    </select>
+    <!--    多条件查询-->
+    <!--    List<ProductInfo> selectConditions(ProductInfoVo productInfoVo);-->
+    <select id="selectConditions" resultType="com.zq.pojo.vo.ProductInfoVo" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from product_info
+        <where>
+            <if test="pname != null and pname != ''">
+                and p_name like '%${pname}%'
+            </if>
+
+            <if test="typeid != null and typeid != ''">
+                and type_id = #{typeid}
+            </if>
+
+            <if test="(minPrice != null and minPrice != '') and (maxPrice == null and maxPrice == '')">
+                and p_price &gt; #{minPrice}
+            </if>
+
+            <if test="(minPrice == null and minPrice == '') and (maxPrice != null and maxPrice != '')">
+                and p_price &lt; #{maxPrice}
+            </if>
+
+            <if test="(minPrice != null and minPrice != '') and (maxPrice != null and maxPrice != '')">
+                and p_price between #{minPrice} and #{maxPrice}
+            </if>
+        </where>
+        order by p_id desc
     </select>
     <update id="updateByExampleSelective" parameterType="map">
         update product_info

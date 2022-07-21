@@ -196,13 +196,11 @@
             if (confirm("您确定删除" + zhi.length + "条商品吗？")) {
                 //拼接ID
                 $.each(zhi, function (index, item) {
-
                     id = $(item).val(); //22 33
-                    alert(id);
                     if (id != null)
                         str += id + ",";  //22,33,44
                 });
-                alert(str + "11111111");
+                alert("id为"+str + "的商品已删除");
                 //发送ajax请求到服务器端
                 $.ajax({
                     url: "${pageContext.request.contextPath}/prod/deletebatch.action",

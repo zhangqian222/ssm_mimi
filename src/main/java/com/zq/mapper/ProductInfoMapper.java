@@ -2,6 +2,7 @@ package com.zq.mapper;
 
 import com.zq.pojo.ProductInfo;
 import com.zq.pojo.ProductInfoExample;
+import com.zq.pojo.vo.ProductInfoVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.lang.reflect.Array;
@@ -34,4 +35,9 @@ public interface ProductInfoMapper {
      * 批量删除
      */
     int deleteBath(String[] pids);
+
+    /**
+     * 多条件商品查询
+     */
+    List<ProductInfo> selectConditions(ProductInfoVo productInfoVo);
 }
