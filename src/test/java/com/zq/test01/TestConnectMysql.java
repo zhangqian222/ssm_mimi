@@ -39,5 +39,6 @@ public class TestConnectMysql {
         for (ProductInfo productInfo : productInfos) {
             System.out.println(productInfo);
         }
+        //test git
     }
 }
