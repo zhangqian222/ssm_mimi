@@ -26,24 +26,23 @@
 <script type="text/javascript">
     function allClick() {
         //取得全选复选框的选中未选 中状态
-        var ischeck=$("#all").prop("checked");
+        var ischeck = $("#all").prop("checked");
         //将此状态赋值给每个商品列表里的复选框
         $("input[name=ck]").each(function () {
-            this.checked=ischeck;
+            this.checked = ischeck;
         });
     }
 
     function ckClick() {
         //取得所有name=ck的被选中的复选框
-        var length=$("input[name=ck]:checked").length;
-//取得所有name=ck的复选框
-        var len=$("input[name=ck]").length;
+        var length = $("input[name=ck]:checked").length;
+        //取得所有name=ck的复选框
+        var len = $("input[name=ck]").length;
         //比较
-        if(len == length){
-            $("#all").prop("checked",true);
-        }else
-        {
-            $("#all").prop("checked",false);
+        if (len == length) {
+            $("#all").prop("checked", true);
+        } else {
+            $("#all").prop("checked", false);
         }
     }
 </script>
@@ -57,12 +56,12 @@
             商品名称：<input name="pname" id="pname">&nbsp;&nbsp;&nbsp;
             商品类型：<select name="typeid" id="typeid">
             <option value="-1">请选择</option>
-            <c:forEach items="${ptlist}" var="pt">
+            <c:forEach items="${typeLists}" var="pt">
                 <option value="${pt.typeId}">${pt.typeName}</option>
             </c:forEach>
         </select>&nbsp;&nbsp;&nbsp;
-            价格：<input name="lprice" id="lprice">-<input name="hprice" id="hprice">
-            <input type="button" value="查询" onclick="ajaxsplit(${info.pageNum})">
+            价格范围：<input name="minPrice" id="minPrice">-<input name="maxPrice" id="maxPrice" value="">
+            <input type="button" value="查询" onclick="selectConditions()">
         </form>
     </div>
     <br>
@@ -95,7 +94,8 @@
                         </tr>
                         <c:forEach items="${info.list}" var="p">
                             <tr>
-                                <td valign="center" align="center"><input type="checkbox" name="ck" id="ck" value="${p.pId}" onclick="ckClick()"></td>
+                                <td valign="center" align="center"><input type="checkbox" name="ck" id="ck"
+                                                                          value="${p.pId}" onclick="ckClick()"></td>
                                 <td>${p.pName}</td>
                                 <td>${p.pContent}</td>
                                 <td>${p.pPrice}</td>
@@ -109,7 +109,7 @@
                                             onclick="one(${p.pId},${info.pageNum})">编辑
                                     </button>
                                     <button type="button" class="btn btn-warning" id="mydel"
-                                            onclick="del(${p.pId})">删除
+                                            onclick="del(${p.pId},${info.pageNum})">删除
                                     </button>
                                 </td>
                             </tr>
@@ -123,9 +123,11 @@
                                     <li>
                                             <%--                                        <a href="${pageContext.request.contextPath}/prod/split.action?page=${info.prePage}" aria-label="Previous">--%>
                                         <a href="javascript:ajaxsplit(${info.prePage})" aria-label="Previous">
-
-                                            <span aria-hidden="true">«</span></a>
+                                            <span aria-hidden="true">«</span>
+                                        </a>
                                     </li>
+
+
                                     <c:forEach begin="1" end="${info.pages}" var="i">
                                         <c:if test="${info.pageNum==i}">
                                             <li>
@@ -141,8 +143,10 @@
                                             </li>
                                         </c:if>
                                     </c:forEach>
+
+
                                     <li>
-                                        <%--  <a href="${pageContext.request.contextPath}/prod/split.action?page=1" aria-label="Next">--%>
+                                            <%--  <a href="${pageContext.request.contextPath}/prod/split.action?page=1" aria-label="Next">--%>
                                         <a href="javascript:ajaxsplit(${info.nextPage})" aria-label="Next">
                                             <span aria-hidden="true">»</span></a>
                                     </li>
@@ -180,59 +184,125 @@
 
     //批量删除
     function deleteBatch() {
-
-            //取得所有被选中删除商品的pid
-            var zhi=$("input[name=ck]:checked");
-            var str="";
-            var id="";
-            if(zhi.length==0){
-                alert("请选择将要删除的商品！");
-            }else{
-                // 有选中的商品，则取出每个选 中商品的ID，拼提交的ID的数据
-                if(confirm("您确定删除"+zhi.length+"条商品吗？")){
+        //取得所有被选中删除商品的pid
+        var zhi = $("input[name=ck]:checked");
+        var str = "";
+        var id = "";
+        if (zhi.length == 0) {
+            alert("请选择将要删除的商品！");
+        } else {
+            // 有选中的商品，则取出每个选 中商品的ID，拼提交的ID的数据
+            if (confirm("您确定删除" + zhi.length + "条商品吗？")) {
                 //拼接ID
-                    $.each(zhi,function (index,item) {
+                $.each(zhi, function (index, item) {
+                    id = $(item).val(); //22 33
+                    if (id != null)
+                        str += id + ",";  //22,33,44
+                });
+                alert("id为" + str + "的商品已删除");
+                //发送ajax请求到服务器端
+                $.ajax({
+                    url: "${pageContext.request.contextPath}/prod/deletebatch.action",
+                    data: {"pids": str},
+                    type: "POST",
+                    dataType: "text",
+                    success: function (msg) {
+                        alert(msg);
+                        $("#table").load("http://localhost:8080/admin/product.jsp #table")
+                    }
+                })
+                // window.location="${pageContext.request.contextPath}/prod/deletebatch.action?str="+str;
 
-                        id=$(item).val(); //22 33
-                        alert(id);
-                        if(id!=null)
-                            str += id+",";  //22,33,44
-                    });
-alert(str+"11111111");
-                    //发送请求到服务器端
-                   // window.location="${pageContext.request.contextPath}/prod/deletebatch.action?str="+str;
-
-                }
+            }
         }
     }
+
     //单个删除
-    function del(pid) {
-        if (confirm("确定删除吗")) {
-          //向服务器提交请求完成删除
-            window.location="${pageContext.request.contextPath}/prod/delete.action?pid="+pid;
+    function del(pid,page) {
+        //取出查询条件
+        var pname = $("#pname").val();
+        var typeid = $("#typeid").val();
+        var maxPrice = $("#maxPrice").val();
+        var minPrice = $("#minPrice").val();
+
+        if (confirm("要删除？？？？？？？？？？？？？？")) {
+            $.ajax({
+                url: "${pageContext.request.contextPath}/prod/delete.action",
+                data: {
+                    "pid": pid,
+                    "pageNum": page,
+                    "pname": pname,
+                    "typeid": typeid,
+                    "maxPrice": maxPrice,
+                    "minPrice": minPrice
+                },
+                type: "POST",
+                //返回类型为字符串
+                dataType: "text",
+                success: function (msg) {
+                    //弹窗显示提示信息
+                    alert(msg);
+                    //重新加载分页显示的容器
+                    $("#table").load("http://localhost:8080/admin/product.jsp #table")
+                }
+            })
         }
     }
 
+    //编辑按钮方法
     function one(pid, ispage) {
-        location.href = "${pageContext.request.contextPath}/prod/one.action?pid=" + pid + "&page=" + ispage;
+        //通过JQuery取出查询条件
+        var pname = $("#pname").val();
+        var typeid = $("#typeid").val();
+        var maxPrice = $("#maxPrice").val();
+        var minPrice = $("#minPrice").val();
+        var str = "pid=" + pid +
+            "&page=" + ispage +
+            "&pname=" + pname +
+            "&typeid=" + typeid +
+            "&maxPrice=" + maxPrice +
+            "&minPrice=" + minPrice +
+            "&pageNum=" + ispage;
+        location.href = "${pageContext.request.contextPath}/prod/one.action?" + str;
     }
-</script>
-<!--分页的AJAX实现-->
-<script type="text/javascript">
+
+    //分页的AJAX实现
     function ajaxsplit(page) {
-        //异步ajax分页请求
+        //取出查询条件
+        var pname = $("#pname").val();
+        var typeid = $("#typeid").val();
+        var maxPrice = $("#maxPrice").val();
+        var minPrice = $("#minPrice").val();
         $.ajax({
-        url:"${pageContext.request.contextPath}/prod/ajaxsplit.action",
-            data:{"page":page},
-            type:"post",
-            success:function () {
-                //重新加载分页显示的组件table
-                //location.href---->http://localhost:8080/admin/login.action
-                $("#table").load("http://localhost:8080/admin/product.jsp #table");
+            url: "${pageContext.request.contextPath}/prod/ajaxSplit.action",
+            data: {"pageNum": page, "pname": pname, "typeid": typeid, "maxPrice": maxPrice, "minPrice": minPrice},
+            type: "POST",
+            success: function () {
+                //重新加载分页显示的容器
+                $("#table").load("http://localhost:8080/admin/product.jsp #table")
             }
         })
-    };
+    }
 
+    // 多条件查询
+    function selectConditions() {
+        //取出查询条件
+        var pname = $("#pname").val();
+        var typeid = $("#typeid").val();
+        var maxPrice = $("#maxPrice").val();
+        var minPrice = $("#minPrice").val();
+        $.ajax({
+            type: "POST",
+            url: "${pageContext.request.contextPath}/prod/ajaxSplit.action",
+            data: {
+                "pname": pname, "typeid": typeid, "maxPrice": maxPrice, "minPrice": minPrice
+            },
+            //刷新容器
+            success: function () {
+                $("#table").load("http://localhost:8080/admin/product.jsp #table")
+            }
+        })
+    }
 </script>
 
 </html>

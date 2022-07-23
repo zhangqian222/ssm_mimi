@@ -12,15 +12,26 @@ public class ProductInfoVo {
     private Integer minPrice;
     //最高价格
     private Integer maxPrice;
+    //页码
+    private Integer pageNum = 1;
 
     public ProductInfoVo() {
     }
+
 
     public ProductInfoVo(String pname, String typeid, Integer minPrice, Integer maxPrice) {
         this.pname = pname;
         this.typeid = typeid;
         this.minPrice = minPrice;
         this.maxPrice = maxPrice;
+    }
+
+    public ProductInfoVo(String pname, String typeid, Integer minPrice, Integer maxPrice, Integer pageNum) {
+        this.pname = pname;
+        this.typeid = typeid;
+        this.minPrice = minPrice;
+        this.maxPrice = maxPrice;
+        this.pageNum = pageNum;
     }
 
     public String getPname() {
@@ -55,6 +66,14 @@ public class ProductInfoVo {
         this.maxPrice = maxPrice;
     }
 
+    public Integer getPageNum() {
+        return pageNum;
+    }
+
+    public void setPageNum(Integer pageNum) {
+        this.pageNum = pageNum;
+    }
+
     @Override
     public String toString() {
         return "ProductInfoVo{" +
@@ -62,6 +81,7 @@ public class ProductInfoVo {
                 ", typeid='" + typeid + '\'' +
                 ", minPrice=" + minPrice +
                 ", maxPrice=" + maxPrice +
+                ", pageNum=" + pageNum +
                 '}';
     }
 }
