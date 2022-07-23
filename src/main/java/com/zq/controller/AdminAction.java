@@ -23,9 +23,10 @@ public class AdminAction {
             request.setAttribute("errmsg", "额贼，用户名或者密码不正确~~~~~~");
             return "login";
         }
-        //登陆成功
+        //登陆成功，
         request.setAttribute("admin", admin);
         return "main";
+        //update from github
 
     }
 }
