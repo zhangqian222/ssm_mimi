@@ -23,7 +23,7 @@
             success: function (obj) {
                 //创建一个图片的标签
                 var img = $("<img>");
-                img.attr("src","${pageContext.request.contextPath}/image_big/"+obj.imgurl);
+                img.attr("src", "${pageContext.request.contextPath}/image_big/" + obj.imgurl);
                 img.attr("width", "100px");
                 img.attr("height", "100px");
                 //将图片追加到imgDiv
@@ -33,6 +33,7 @@
             }
         })
     }
+
     // function fileChange(){//注意：此处不能使用jQuery中的change事件，因此仅触发一次，因此使用标签的：onchange属性
     //    alert("change");
     //     $.ajaxFileUpload({

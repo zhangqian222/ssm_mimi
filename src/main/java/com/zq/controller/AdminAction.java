@@ -26,7 +26,7 @@ public class AdminAction {
         //登陆成功，
         request.setAttribute("admin", admin);
         return "main";
-        //update from github
+        
 
     }
 }

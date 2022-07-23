@@ -2,6 +2,7 @@ package com.zq.service;
 
 import com.github.pagehelper.PageInfo;
 import com.zq.pojo.ProductInfo;
+import com.zq.pojo.vo.ProductInfoVo;
 
 import java.util.List;
 
@@ -16,6 +17,11 @@ public interface ProductInfoService {
      * 传入参数：当前页pageNum，每页的条数pages
      */
     PageInfo getAllWithPageInfo(int pageNum, int pageSize);
+
+    /**
+     * 多条件商品查询（带分页参数）
+     */
+    PageInfo<ProductInfo> selectWithConditions(ProductInfoVo productInfoVo,int pageSize);
 
     /**
      * 添加商品
@@ -49,4 +55,9 @@ public interface ProductInfoService {
      * @return
      */
     int deleteBatch(String[] ids);
+
+    /**
+     * 多条件查询商品
+     */
+    List<ProductInfo> selectConditions(ProductInfoVo productInfoVo);
 }

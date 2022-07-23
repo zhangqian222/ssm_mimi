@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.zq.mapper.ProductInfoMapper;
 import com.zq.pojo.ProductInfo;
 import com.zq.pojo.ProductInfoExample;
+import com.zq.pojo.vo.ProductInfoVo;
 import com.zq.service.ProductInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,14 @@ public class ProductInfoServiceImpl implements ProductInfoService {
     }
 
     @Override
+    public PageInfo<ProductInfo> selectWithConditions(ProductInfoVo productInfoVo, int pageSize) {
+        PageHelper.startPage(productInfoVo.getPageNum(), pageSize);
+        List<ProductInfo> productInfos = productInfoMapper.selectConditions(productInfoVo);
+        PageInfo<ProductInfo> pageInfo = new PageInfo<>(productInfos);
+        return pageInfo;
+    }
+
+    @Override
     public int save(ProductInfo info) {
         int i = productInfoMapper.insert(info);
         return i;
@@ -68,5 +77,11 @@ public class ProductInfoServiceImpl implements ProductInfoService {
     public int deleteBatch(String[] ids) {
         int i = productInfoMapper.deleteBath(ids);
         return i;
+    }
+
+    @Override
+    public List<ProductInfo> selectConditions(ProductInfoVo productInfoVo) {
+        List<ProductInfo> productInfos = productInfoMapper.selectConditions(productInfoVo);
+        return productInfos;
     }
 }
